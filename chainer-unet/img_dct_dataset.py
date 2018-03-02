@@ -3,20 +3,23 @@ import glob
 import numpy as np
 
 
-#C DataSet
+#DataSet
 class ImgDCTDataset(dataset_mixin.DatasetMixin):
-    def __init__(self, dataDir="./train/"):
+    def __init__(self, dataDir="./train/", data_range=(1, 1000)):
         print("load dataset start...")
-        print("from: %s" % dataDir)
-        print("data_num: %d", len(glob.glob(dataDir)))
+        print("from: %s" % dataDir + "*.npy")
+        print("data_num: [%d, %d)" % (data_range[0], data_range[1]))
         self.dataDir = dataDir
         self.dataset = []
+        
+        paths = sorted(glob.glob(self.dataDir + "*.npy"))
+        load_paths = paths[data_range[0]:data_range[1]]
 
-        train_npy_paths = glob.glob(self.dataDir)
-        for train_npy_path in train_npy_path:
-            data = np.load(train_npy_path)
+        for load_path in load_paths:
+            data = np.load(load_path)
             img, dct = data[:, :, :3], data[:, :, 3:]
             self.dataset.append((img, dct))
+        import ipdb; ipdb.set_trace()
         print("load dataset done!")
     
     def __len__(self):
